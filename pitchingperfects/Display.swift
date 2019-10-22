@@ -11,35 +11,44 @@ import AVFoundation
 struct Display: View {
     @State private var stopButton: Bool = true
     @State private var voiceButtons: Bool = false
-
-  var audioRec = PlayerControllerUIView()
-  enum ButtonType: String {
-    case Slow,Fast,LowPitch,HighPitch,Echo,Reverb
+    @State private var isaudioPlaying: PlayingState = .notPlaying
+    var audioRec = PlayerControllerUIView()
+    enum ButtonType: String {
+        case Slow,Fast,LowPitch,HighPitch,Echo,Reverb
     }
+    enum PlayingState { case playing, notPlaying }
     var imageNames = [["Slow","Fast"],["Reverb","Echo"],["LowPitch","HighPitch"]]
     func returnValue(imageName: String)-> some View{
         var button: some View {  Button(action: {
             switch(ButtonType(rawValue: imageName)) {
-              case .Slow:
-                   self.audioRec.playSound(rate: 0.5)
-              case .Fast:
-                   self.audioRec.playSound(rate: 1.5)
-              case .LowPitch:
-                   self.audioRec.playSound(pitch: -1000)
-              case .HighPitch:
-                   self.audioRec.playSound(pitch: 1000)
-              case .Echo:
-                   self.audioRec.playSound(echo: true)
-              case .Reverb:
-                   self.audioRec.playSound(reverb: true)
+            case .Slow:
+                self.audioRec.playSound(rate: 0.5)
+            case .Fast:
+                self.audioRec.playSound(rate: 1.5)
+            case .LowPitch:
+                self.audioRec.playSound(pitch: -1000)
+            case .HighPitch:
+                self.audioRec.playSound(pitch: 1000)
+            case .Echo:
+                self.audioRec.playSound(echo: true)
+            case .Reverb:
+                self.audioRec.playSound(reverb: true)
             case .none:
-               self.audioRec.playSound()
+                self.audioRec.playSound()
             }
-            self.voiceButtons = true
-            self.stopButton = false
+            self.isaudioPlaying = .playing
+           
+            switch(self.isaudioPlaying) {
+            case .playing:
+                self.voiceButtons = true
+                self.stopButton = false
+            case .notPlaying:
+                self.voiceButtons = false
+                self.stopButton = true
+            }
         }){
             Image(imageName)
-            }.disabled(voiceButtons)
+        }.disabled(voiceButtons)
             
         }
         return button
@@ -51,8 +60,15 @@ struct Display: View {
             }
             Button(action: {
                 self.audioRec.stopAudio()
-                self.voiceButtons = false
-                self.stopButton = true
+                self.isaudioPlaying = .notPlaying
+                switch(self.isaudioPlaying) {
+                case .playing:
+                    self.voiceButtons = true
+                    self.stopButton = false
+                case .notPlaying:
+                    self.voiceButtons = false
+                    self.stopButton = true
+                }
             }){
                 Image("Stop").resizable()
                     .scaledToFit()
@@ -93,6 +109,7 @@ class PlayerControllerUIView: UIView{
     var audioEngine:AVAudioEngine!
     var audioPlayerNode: AVAudioPlayerNode!
     var stopTimer: Timer!
+    var isaudioPlaying: Bool!
     struct Alerts {
         static let DismissAlert = "Dismiss"
         static let RecordingDisabledTitle = "Recording Disabled"
@@ -117,14 +134,14 @@ class PlayerControllerUIView: UIView{
     }
 }
 extension PlayerControllerUIView:AVAudioPlayerDelegate {
-    enum PlayingState { case playing, notPlaying }
+
     func setupAudio() {
-       let dirPath = NSSearchPathForDirectoriesInDomains(.documentDirectory,.userDomainMask, true)[0] as String
-           let recordingName = "recordedVoice.wav"
-           let pathArray = [dirPath,recordingName]
-           let filePath : String = pathArray.joined(separator: "/")
-           let urlStr : String = filePath.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
-           let convertedURL : URL = URL(string: urlStr)!
+        let dirPath = NSSearchPathForDirectoriesInDomains(.documentDirectory,.userDomainMask, true)[0] as String
+        let recordingName = "recordedVoice.wav"
+        let pathArray = [dirPath,recordingName]
+        let filePath : String = pathArray.joined(separator: "/")
+        let urlStr : String = filePath.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
+        let convertedURL : URL = URL(string: urlStr)!
         do {
             audioFile = try AVAudioFile(forReading: convertedURL as URL)
         } catch {
@@ -184,57 +201,29 @@ extension PlayerControllerUIView:AVAudioPlayerDelegate {
             showAlert(Alerts.AudioEngineError, message: String(describing: error))
             return
         }
+        isaudioPlaying = true
         audioPlayerNode.play()
     }
-    
     @objc func stopAudio() {
-        
         if let audioPlayerNode = audioPlayerNode {
             audioPlayerNode.stop()
         }
-        
         if let stopTimer = stopTimer {
             stopTimer.invalidate()
         }
-        
-      //  configureUI(.notPlaying)
-        
+        isaudioPlaying = false
         if let audioEngine = audioEngine {
             audioEngine.stop()
             audioEngine.reset()
         }
     }
-    
     // MARK: Connect List of Audio Nodes
-    
     func connectAudioNodes(_ nodes: AVAudioNode...) {
         for x in 0..<nodes.count-1 {
             audioEngine.connect(nodes[x], to: nodes[x+1], format: audioFile.processingFormat)
         }
     }
-    
     // MARK: UI Functions
-    
-    func configureUI(_ playState: PlayingState) {
-        switch(playState) {
-        case .playing:
-            setPlayButtonsEnabled(false)
-        //  stopButton.isEnabled = true
-        case .notPlaying:
-            setPlayButtonsEnabled(true)
-            //   stopButton.isEnabled = false
-        }
-    }
-    
-    func setPlayButtonsEnabled(_ enabled: Bool) {
-        //        snailButton.isEnabled = enabled
-        //        chipmunkButton.isEnabled = enabled
-        //        rabbitButton.isEnabled = enabled
-        //        vaderButton.isEnabled = enabled
-        //        echoButton.isEnabled = enabled
-        //        reverbButton.isEnabled = enabled
-    }
-    
     func showAlert(_ title: String, message: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: Alerts.DismissAlert, style: .default, handler: nil))
