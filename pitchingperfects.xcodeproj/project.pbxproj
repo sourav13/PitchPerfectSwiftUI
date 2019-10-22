@@ -16,6 +16,7 @@
 		18BFD869235A683C004EB4C0 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 18BFD867235A683C004EB4C0 /* LaunchScreen.storyboard */; };
 		18BFD874235A683C004EB4C0 /* pitchingperfectsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18BFD873235A683C004EB4C0 /* pitchingperfectsTests.swift */; };
 		18BFD87F235A683C004EB4C0 /* pitchingperfectsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18BFD87E235A683C004EB4C0 /* pitchingperfectsUITests.swift */; };
+		18BFD88D235A6CAD004EB4C0 /* Display.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18BFD88C235A6CAD004EB4C0 /* Display.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,6 +52,7 @@
 		18BFD87A235A683C004EB4C0 /* pitchingperfectsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = pitchingperfectsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		18BFD87E235A683C004EB4C0 /* pitchingperfectsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = pitchingperfectsUITests.swift; sourceTree = "<group>"; };
 		18BFD880235A683C004EB4C0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		18BFD88C235A6CAD004EB4C0 /* Display.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Display.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -104,6 +106,7 @@
 				18BFD859235A683A004EB4C0 /* AppDelegate.swift */,
 				18BFD85B235A683A004EB4C0 /* SceneDelegate.swift */,
 				18BFD860235A683A004EB4C0 /* ContentView.swift */,
+				18BFD88C235A6CAD004EB4C0 /* Display.swift */,
 				18BFD862235A683C004EB4C0 /* Assets.xcassets */,
 				18BFD867235A683C004EB4C0 /* LaunchScreen.storyboard */,
 				18BFD86A235A683C004EB4C0 /* Info.plist */,
@@ -270,6 +273,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				18BFD88D235A6CAD004EB4C0 /* Display.swift in Sources */,
 				18BFD85A235A683A004EB4C0 /* AppDelegate.swift in Sources */,
 				18BFD85F235A683A004EB4C0 /* pitchingperfects.xcdatamodeld in Sources */,
 				18BFD861235A683A004EB4C0 /* ContentView.swift in Sources */,
